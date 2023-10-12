@@ -55,21 +55,18 @@ func New(ios *iostreams.IOStreams, headers headerOption) *TablePrinter {
 
 // NewWithWriter creates a TablePrinter from a Writer, whether the output is a terminal, the terminal width, and more.
 func NewWithWriter(w io.Writer, isTTY bool, maxWidth int, cs *iostreams.ColorScheme, headers headerOption) *TablePrinter {
-	tp := &TablePrinter{
-		TablePrinter: tableprinter.New(w, isTTY, maxWidth),
+	// Make sure all headers are uppercase.
+	if isTTY && len(headers.columns) > 0 {
+		for i, header := range headers.columns {
+			headers.columns[i] = strings.ToUpper(header)
+		}
+	}
+
+	return &TablePrinter{
+		TablePrinter: tableprinter.New(w, isTTY, maxWidth, tableprinter.WithHeaders(cs.GrayBold, headers.columns...)),
 		isTTY:        isTTY,
 		cs:           cs,
 	}
-
-	if isTTY && len(headers.columns) > 0 {
-		for _, header := range headers.columns {
-			// TODO: Consider truncating longer headers e.g., NUMBER, or removing unnecessary headers e.g., DESCRIPTION with no descriptions.
-			tp.AddField(strings.ToUpper(header), WithColor(cs.GrayBold))
-		}
-		tp.EndRow()
-	}
-
-	return tp
 }
 
 // WithHeaders defines the column names for a table.

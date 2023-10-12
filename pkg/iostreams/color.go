@@ -19,7 +19,7 @@ var (
 	bold      = ansi.ColorFunc("default+b")
 	cyanBold  = ansi.ColorFunc("cyan+b")
 	greenBold = ansi.ColorFunc("green+b")
-	grayBold  = ansi.ColorFunc("black+b")
+	grayBold  = ansi.ColorFunc("black+bu")
 
 	gray256 = func(t string) string {
 		return fmt.Sprintf("\x1b[%d;5;%dm%s\x1b[m", 38, 242, t)
